@@ -34,6 +34,9 @@ public class PartList extends BaseTime {
 	@ManyToMany
 	private List<Part> parts;
 
+	@ManyToMany(mappedBy = "partLists")
+	private List<Timer> timer;
+
 	@Builder
 	public PartList(List<Part> parts) {
 		this.parts = parts;

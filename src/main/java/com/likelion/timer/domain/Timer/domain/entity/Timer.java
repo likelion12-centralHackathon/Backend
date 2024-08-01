@@ -20,8 +20,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,6 +40,9 @@ public class Timer extends BaseTime {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private T_User user;
 
+	@Column(unique = true)
+	private String name;
+
 	private Float cycle;
 
 	private Boolean isPermanent;
@@ -49,13 +52,14 @@ public class Timer extends BaseTime {
 	@Enumerated(EnumType.STRING)
 	private TimerStateTypeEnum timerState;
 
-	@OneToMany(fetch = FetchType.EAGER)
+	@ManyToMany
 	private List<PartList> partLists;
 
 	@Builder
-	public Timer(@NotNull T_User user, Float cycle, Boolean isPermanent, Boolean isSettingByUser,
+	public Timer(@NotNull T_User user, String name, Float cycle, Boolean isPermanent, Boolean isSettingByUser,
 		List<PartList> partLists) {
 		this.user = user;
+		this.name = name;
 		this.cycle = cycle;
 		this.timerState = TimerStateTypeEnum.TIMER_NOT_START;
 		this.isPermanent = isPermanent;
@@ -65,6 +69,12 @@ public class Timer extends BaseTime {
 
 	public void changedTimerState(TimerStateTypeEnum timerState) {
 		this.timerState = timerState;
+	}
+
+	public void addPartList(PartList partList) {
+		if (!this.partLists.contains(partList)) {
+			this.partLists.add(partList);
+		}
 	}
 
 	@Override
