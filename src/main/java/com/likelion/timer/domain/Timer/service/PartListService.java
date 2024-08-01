@@ -15,10 +15,11 @@ import com.likelion.timer.domain.Timer.domain.entity.Part;
 import com.likelion.timer.domain.Timer.domain.entity.PartList;
 import com.likelion.timer.domain.Timer.domain.repository.PartListRepository;
 import com.likelion.timer.domain.Timer.dto.req.PartReqDto;
-import com.likelion.timer.domain.model.PartTypeEnum;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class PartListService {
@@ -28,17 +29,18 @@ public class PartListService {
 
 	private static final Random RANDOM = new Random();
 
-	public List<PartList> randomUniquePartsByPartListSize(int listSize) {
+	// 랜덤하게 partList 설정하는 함수
+	public List<PartList> saveRandomUniqueParts(int listSize) {
 		// Set을 사용하여 중복된 PartList를 방지합니다.
 		Set<PartList> uniquePartLists = new HashSet<>();
 
 		while (uniquePartLists.size() < listSize) {
 			// 중복되지 않는 PartTypeEnum 값을 가져옵니다.
-			List<PartTypeEnum> uniquePartTypes = partService.getRandomUniquePartTypes(
+			List<Long> uniquePartIds = partService.getRandomUniquePartIds(
 				RANDOM.nextInt(MAX_PARTS) + 1);
 
 			// Part 객체를 가져옵니다.
-			List<Part> parts = partService.getPartsByPartTypeEnums(uniquePartTypes);
+			List<Part> parts = partService.changePartIdToPartList(uniquePartIds);
 
 			// PartList를 생성합니다.
 			PartList partList = PartList.builder()
@@ -55,21 +57,26 @@ public class PartListService {
 			.collect(Collectors.toList());
 	}
 
-	public List<PartList> getPartsByPartReqList(List<PartReqDto> partReqDtoList) {
+	// 직접 설정한 partList를 저장하는 것
+	public List<PartList> saveParts(List<PartReqDto> partReqDtoList) {
 		return partReqDtoList.stream()
 			.map(partReqDto -> {
-				List<Part> parts = partService.getPartsByPartTypeEnums(partReqDto.getPartTypes());
+				// 받은 partList의 Id를 part로 변경
+				List<Part> parts = partService.changePartIdToPartList(partReqDto.getPartIds());
+				// 받은 partList 조합으로 저장된 게 있는지 찾기
+				Optional<PartList> existingPartListOpt = partListRepository.findByParts(parts, parts.size());
 
-				// 중복 체크 로직 추가
-				Optional<PartList> existingPartListOpt = partListRepository.findByParts(parts);
+				// 이미 존재하는 조합인 경우, 해당 PartList 반환
 				if (existingPartListOpt.isPresent()) {
 					return existingPartListOpt.get();
 				}
 
+				// 새로운 PartList 생성 및 저장
 				PartList partList = PartList.builder().parts(parts).build();
 				partListRepository.save(partList);
 				return partList;
 			})
 			.collect(Collectors.toList());
 	}
+
 }
