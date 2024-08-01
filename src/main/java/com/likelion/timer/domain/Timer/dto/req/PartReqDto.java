@@ -4,7 +4,6 @@ import static com.likelion.timer.domain.Timer.constants.TimerConstants.*;
 
 import java.util.List;
 
-import com.likelion.timer.domain.model.PartTypeEnum;
 import com.likelion.timer.global.validation.MaxListSize;
 
 import lombok.AllArgsConstructor;
@@ -19,5 +18,5 @@ import lombok.NoArgsConstructor;
 public class PartReqDto {
 
 	@MaxListSize(max = MAX_PARTS)
-	List<PartTypeEnum> partTypes;
+	List<Long> partIds;
 }
