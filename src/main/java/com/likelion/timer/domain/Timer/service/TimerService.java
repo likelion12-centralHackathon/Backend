@@ -3,6 +3,7 @@ package com.likelion.timer.domain.Timer.service;
 import static com.likelion.timer.domain.Timer.constants.TimerConstants.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.stereotype.Service;
@@ -39,24 +40,41 @@ public class TimerService {
 
 		// partList 설정
 		List<PartList> partLists;
+
 		if (timerReqDto.getIsSettingByUser()) { // 직접 설정인 경우
 			if (timerReqDto.getParts() == null) { // 스틑레칭 부위가 안 온 경우
 				throw new AppException(TimerErrorCode.INVALID_PART_LIST_BY_USER);
 			}
 
-			partLists = partListService.getPartsByPartReqList(timerReqDto.getParts());
+			partLists = partListService.saveParts(timerReqDto.getParts());
 
 		} else { // 랜덤인 경우
 			if (timerReqDto.getParts() != null) { // 스틑레칭 부위가 온 경우
-				throw new AppException(TimerErrorCode.INVALID_PART_LIST_BY_USER);
+				throw new AppException(TimerErrorCode.INVALID_PART_LIST_BY_SYSTEM);
 			}
 
-			partLists = partListService.randomUniquePartsByPartListSize(RANDOM.nextInt(MAX_STRETCHING_TIMES) + 1);
+			partLists = partListService.saveRandomUniqueParts(RANDOM.nextInt(MAX_STRETCHING_TIMES) + 1);
+		}
+
+		// name 설정
+		String name;
+		if (timerReqDto.getIsPermanent() && timerReqDto.getName() == null) {
+			throw new AppException(TimerErrorCode.TIMER_NAME_REQUIRED);
+		} else if (!timerReqDto.getIsPermanent()) {
+			name = null;
+		} else {
+			Optional<Timer> timer = timerRepository.findByName(timerReqDto.getName());
+			if (timer.isEmpty()) {
+				name = timerReqDto.getName();
+			} else {
+				throw new AppException(TimerErrorCode.INVALID_TIMER_NAME);
+			}
 		}
 
 		// timer 객체 생성
 		Timer timer = Timer.builder()
 			.user(user)
+			.name(name)
 			.cycle(timerReqDto.getCycle())
 			.isPermanent(timerReqDto.getIsPermanent())
 			.isSettingByUser(timerReqDto.getIsSettingByUser())

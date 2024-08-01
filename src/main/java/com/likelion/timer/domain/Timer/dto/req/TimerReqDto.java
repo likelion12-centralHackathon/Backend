@@ -20,6 +20,8 @@ import lombok.NoArgsConstructor;
 @Getter
 public class TimerReqDto {
 
+	String name;
+
 	@NotNull
 	Boolean isPermanent;
 

@@ -12,6 +12,7 @@ import lombok.Getter;
 @Builder
 public class TimerResDto {
 	private Long userId;
+	private String name;
 	private float cycle;
 	private TimerStateTypeEnum timerState;
 	private boolean isPermanent;
@@ -21,6 +22,7 @@ public class TimerResDto {
 	public static TimerResDto fromEntity(Timer timer) {
 		return TimerResDto.builder()
 			.userId(timer.getUser().getId())
+			.name(timer.getName())
 			.timerState(timer.getTimerState())
 			.cycle(timer.getCycle())
 			.isSettingByUser(timer.getIsSettingByUser())
