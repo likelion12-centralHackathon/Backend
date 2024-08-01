@@ -9,11 +9,11 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum PartTypeEnum {
-	EYES(0, "Eyes"),
-	NECK(1, "Neck"),
-	WAIST(2, "Waist"),
-	LEG(3, "Leg"),
-	ETC(4, "Etc"),
+	EYES(1, "Eyes"),
+	NECK(2, "Neck"),
+	WAIST(3, "Waist"),
+	LEG(4, "Leg"),
+	ETC(5, "Etc"),
 	;
 
 	private final Integer key;
@@ -21,11 +21,11 @@ public enum PartTypeEnum {
 
 	public static PartTypeEnum findByKey(Integer key) {
 		return switch (key) {
-			case 0 -> EYES;
-			case 1 -> NECK;
-			case 2 -> WAIST;
-			case 3 -> LEG;
-			case 4 -> ETC;
+			case 1 -> EYES;
+			case 2 -> NECK;
+			case 3 -> WAIST;
+			case 4 -> LEG;
+			case 5 -> ETC;
 			default -> throw new AppException(TimerErrorCode.INVALID_PART_TYPE);
 		};
 	}
