@@ -15,7 +15,7 @@ import com.likelion.timer.domain.Timer.domain.entity.PartList;
 public interface PartListRepository extends JpaRepository<PartList, Long> {
 
 	@Query(
-		"SELECT pl FROM PartList pl JOIN pl.parts p "
+		"SELECT DISTINCT pl FROM PartList pl JOIN pl.parts p "
 			+ "WHERE p IN :parts GROUP BY pl "
 			+ "HAVING COUNT(p) = :size")
 	Optional<PartList> findByParts(@Param("parts") List<Part> parts, @Param("size") long size);
