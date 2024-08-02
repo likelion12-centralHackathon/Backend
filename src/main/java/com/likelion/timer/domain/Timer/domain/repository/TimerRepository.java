@@ -16,8 +16,7 @@ public interface TimerRepository extends JpaRepository<Timer, Long> {
 	@Query("SELECT t FROM Timer t WHERE t.user.id = :userId AND t.id = :timerId")
 	Optional<Timer> findByUserIdAndId(@Param("userId") String userId, @Param("timerId") Long timerId);
 
-	@Query("SELECT t FROM Timer t WHERE t.user.id = :userId AND t.name = :name")
-	Optional<Timer> findByUserIdAndName(@Param("userId") String userId, @Param("name") String name);
+	Optional<Timer> findByUserIdAndName(String userId, String name);
 
 	@Query("SELECT new com.likelion.timer.domain.Timer.dto.res.TimerListResDto(t.id, t.name) " +
 		"FROM Timer t "
