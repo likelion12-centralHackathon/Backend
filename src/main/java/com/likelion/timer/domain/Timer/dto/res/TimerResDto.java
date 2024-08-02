@@ -11,16 +11,18 @@ import lombok.Getter;
 @Getter
 @Builder
 public class TimerResDto {
+	private Long timerId;
 	private Long userId;
 	private String name;
 	private float cycle;
 	private TimerStateTypeEnum timerState;
 	private boolean isPermanent;
 	private boolean isSettingByUser;
-	private List<PartListResDto> partLists;
+	private List<PartListResDto> parts;
 
 	public static TimerResDto fromEntity(Timer timer) {
 		return TimerResDto.builder()
+			.timerId(timer.getId())
 			.userId(timer.getUser().getId())
 			.name(timer.getName())
 			.timerState(timer.getTimerState())
@@ -28,7 +30,7 @@ public class TimerResDto {
 			.isSettingByUser(timer.getIsSettingByUser())
 			.isPermanent(timer.getIsPermanent())
 			.isSettingByUser(timer.getIsSettingByUser())
-			.partLists(timer.getPartLists().stream()
+			.parts(timer.getPartLists().stream()
 				.map(PartListResDto::fromEntity)
 				.toList())
 			.build();
