@@ -170,10 +170,10 @@ public class TimerService {
 
 	private Boolean checkUniqueName(String userId, String name) {
 		Optional<Timer> timer = timerRepository.findByUserIdAndName(userId, name);
-		if (timer.isEmpty()) {
-			return true;
-		} else {
+		if (timer.isPresent()) {
 			throw new AppException(TimerErrorCode.INVALID_TIMER_NAME);
+		} else {
+			return true;
 		}
 	}
 
