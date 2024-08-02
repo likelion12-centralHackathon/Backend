@@ -4,7 +4,6 @@ import static com.likelion.timer.domain.Timer.constants.TimerConstants.*;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -63,14 +62,18 @@ public class PartListService {
 			.map(partReqDto -> {
 				// 받은 partList의 Id를 part로 변경
 				List<Part> parts = partService.changePartIdToPartList(partReqDto.getPartIds());
-				// 받은 partList 조합으로 저장된 게 있는지 찾기
+
+				// TODO 중복 검사 로직 생각하기
+				/*
+				// 받은 Part 조합으로 저장된 게 있는지 찾기
 				Optional<PartList> existingPartListOpt = partListRepository.findByParts(parts, parts.size());
 
 				// 이미 존재하는 조합인 경우, 해당 PartList 반환
 				if (existingPartListOpt.isPresent()) {
 					return existingPartListOpt.get();
 				}
-
+				 */
+				
 				// 새로운 PartList 생성 및 저장
 				PartList partList = PartList.builder().parts(parts).build();
 				partListRepository.save(partList);
