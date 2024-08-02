@@ -8,9 +8,9 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.likelion.timer.domain.Timer.dto.req.TimerUpdateReqDto;
-import com.likelion.timer.domain.User.domain.T_User;
 import com.likelion.timer.domain.model.TimerStateTypeEnum;
 import com.likelion.timer.global.entity.BaseTime;
+import com.likelion.timer.user.model.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,7 +39,7 @@ public class Timer extends BaseTime {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	private T_User user;
+	private User user;
 
 	private String name;
 
@@ -56,7 +56,7 @@ public class Timer extends BaseTime {
 	private List<PartList> partLists;
 
 	@Builder
-	public Timer(@NotNull T_User user, String name, Float cycle, Boolean isPermanent, Boolean isSettingByUser,
+	public Timer(@NotNull User user, String name, Float cycle, Boolean isPermanent, Boolean isSettingByUser,
 		List<PartList> partLists) {
 		this.user = user;
 		this.name = name;

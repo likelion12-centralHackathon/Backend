@@ -18,10 +18,11 @@ import com.likelion.timer.domain.Timer.dto.req.TimerUpdateReqDto;
 import com.likelion.timer.domain.Timer.dto.res.TimerListResDto;
 import com.likelion.timer.domain.Timer.dto.res.TimerResDto;
 import com.likelion.timer.domain.Timer.error.TimerErrorCode;
-import com.likelion.timer.domain.User.domain.T_User;
-import com.likelion.timer.domain.User.domain.T_UserRepository;
 import com.likelion.timer.domain.model.TimerStateTypeEnum;
+import com.likelion.timer.global.error.GlobalErrorCode;
 import com.likelion.timer.global.error.exception.AppException;
+import com.likelion.timer.user.model.User;
+import com.likelion.timer.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,34 +31,37 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class TimerService {
-	private final T_UserRepository userRepository;
+	private final UserRepository userRepository;
 	private final TimerRepository timerRepository;
 	private final PartListService partListService;
 
 	private static final Random RANDOM = new Random();
 
 	@Transactional(readOnly = true)
-	public TimerResDto getTimer(Long timerId) {
-		// TODO user 연결
-		Timer timer = timerRepository.findById(timerId)
+	public TimerResDto getTimer(String userId, Long timerId) {
+		userRepository.findById(userId)
+			.orElseThrow(() -> new AppException(GlobalErrorCode.USER_NOT_FOUND));
+
+		Timer timer = timerRepository.findByUserIdAndId(userId, timerId)
 			.orElseThrow(() -> new AppException(TimerErrorCode.TIMER_NOT_FOUND));
 
 		return TimerResDto.fromEntity(timer);
 	}
 
 	@Transactional(readOnly = true)
-	public List<TimerListResDto> getTimerList() {
-		// TODO user 연결
-		return timerRepository.findPermanentTimersNameAndIdByUserId(1L);
+	public List<TimerListResDto> getTimerList(String userId) {
+		userRepository.findById(userId)
+			.orElseThrow(() -> new AppException(GlobalErrorCode.USER_NOT_FOUND));
+
+		return timerRepository.findPermanentTimersNameAndIdByUserId(userId);
 	}
 
 	@Transactional
-	public void updateTimerState(Long timerId, TimerStateTypeEnum timerState) {
-		// 사용자 찾기
-		T_User user = T_User.builder().name("name").build();
-		userRepository.save(user);
+	public void updateTimerState(String userId, Long timerId, TimerStateTypeEnum timerState) {
+		userRepository.findById(userId)
+			.orElseThrow(() -> new AppException(GlobalErrorCode.USER_NOT_FOUND));
 
-		Timer timer = timerRepository.findById(timerId)
+		Timer timer = timerRepository.findByUserIdAndId(userId, timerId)
 			.orElseThrow(() -> new AppException(TimerErrorCode.TIMER_NOT_FOUND));
 
 		timer.changedTimerState(timerState);
@@ -70,19 +74,22 @@ public class TimerService {
 	}
 
 	@Transactional
-	public void deleteTimer(Long timerId) {
-		Timer timer = timerRepository.findById(timerId)
+	public void deleteTimer(String userId, Long timerId) {
+		userRepository.findById(userId)
+			.orElseThrow(() -> new AppException(GlobalErrorCode.USER_NOT_FOUND));
+
+		Timer timer = timerRepository.findByUserIdAndId(userId, timerId)
 			.orElseThrow(() -> new AppException(TimerErrorCode.TIMER_NOT_FOUND));
 		timerRepository.delete(timer);
 	}
 
 	@Transactional
-	public TimerResDto updateTimer(Long timerId, TimerUpdateReqDto timerUpdateReqDto) {
-		// 사용자 찾기
-		T_User user = T_User.builder().name("name").build();
-		userRepository.save(user);
+	public TimerResDto updateTimer(String userId, Long timerId, TimerUpdateReqDto timerUpdateReqDto) {
 
-		Timer timer = timerRepository.findById(timerId)
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new AppException(GlobalErrorCode.USER_NOT_FOUND));
+
+		Timer timer = timerRepository.findByUserIdAndId(userId, timerId)
 			.orElseThrow(() -> new AppException(TimerErrorCode.TIMER_NOT_FOUND));
 
 		// name 중복 체크
@@ -103,10 +110,10 @@ public class TimerService {
 	}
 
 	@Transactional
-	public TimerResDto addTimer(TimerReqDto timerReqDto) {
+	public TimerResDto addTimer(String userId, TimerReqDto timerReqDto) {
 		// 사용자 찾기
-		T_User user = T_User.builder().name("name").build();
-		userRepository.save(user);
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new AppException(GlobalErrorCode.USER_NOT_FOUND));
 
 		// name 설정
 		String name = checkName(timerReqDto.getIsPermanent(), user.getId(), timerReqDto.getName());
@@ -151,7 +158,7 @@ public class TimerService {
 		return partLists;
 	}
 
-	private String checkName(Boolean isPermanent, Long userId, String name) {
+	private String checkName(Boolean isPermanent, String userId, String name) {
 		if (isPermanent && name == null) {
 			throw new AppException(TimerErrorCode.TIMER_NAME_REQUIRED);
 		} else if (isPermanent && checkUniqueName(userId, name)) {
@@ -161,7 +168,7 @@ public class TimerService {
 		}
 	}
 
-	private Boolean checkUniqueName(Long userId, String name) {
+	private Boolean checkUniqueName(String userId, String name) {
 		Optional<Timer> timer = timerRepository.findByUserIdAndName(userId, name);
 		if (timer.isEmpty()) {
 			return true;

@@ -12,7 +12,7 @@ import lombok.Getter;
 @Builder
 public class TimerResDto {
 	private Long timerId;
-	private Long userId;
+	private String userId;
 	private String name;
 	private float cycle;
 	private TimerStateTypeEnum timerState;
