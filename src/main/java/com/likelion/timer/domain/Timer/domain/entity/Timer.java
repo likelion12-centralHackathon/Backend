@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.likelion.timer.domain.Timer.dto.req.TimerUpdateReqDto;
 import com.likelion.timer.domain.User.domain.T_User;
 import com.likelion.timer.domain.model.TimerStateTypeEnum;
 import com.likelion.timer.global.entity.BaseTime;
@@ -40,7 +41,6 @@ public class Timer extends BaseTime {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private T_User user;
 
-	@Column(unique = true)
 	private String name;
 
 	private Float cycle;
@@ -71,10 +71,11 @@ public class Timer extends BaseTime {
 		this.timerState = timerState;
 	}
 
-	public void addPartList(PartList partList) {
-		if (!this.partLists.contains(partList)) {
-			this.partLists.add(partList);
-		}
+	public void updateTimer(TimerUpdateReqDto timerUpdateReqDto, List<PartList> partLists) {
+		this.name = timerUpdateReqDto.getName();
+		this.cycle = timerUpdateReqDto.getCycle();
+		this.isSettingByUser = timerUpdateReqDto.getIsSettingByUser();
+		this.partLists = partLists;
 	}
 
 	@Override
