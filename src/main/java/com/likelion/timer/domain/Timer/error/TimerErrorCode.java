@@ -8,6 +8,7 @@ import lombok.Getter;
 
 @Getter
 public enum TimerErrorCode implements ErrorCode {
+	TIMER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 타이머가 없습니다."),
 	INVALID_TIMER_STATE(HttpStatus.BAD_REQUEST, "해당하는 타이머 상태가 없습니다."),
 	INVALID_PART_TYPE(HttpStatus.BAD_REQUEST, "해당하는 스트레칭 부위가 없습니다."),
 	INVALID_TIMER_NAME(HttpStatus.BAD_REQUEST, "타이머 이름은 중복될 수 없습니다."),
