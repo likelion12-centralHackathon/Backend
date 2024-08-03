@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.likelion.timer.global.entity.BaseTime;
 import com.likelion.timer.login.constant.AuthType;
 import com.likelion.timer.user.constant.GenderType;
 import com.likelion.timer.user.constant.UserStatus;
@@ -28,7 +29,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Entity
-public class User {
+public class User extends BaseTime {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
@@ -56,12 +57,6 @@ public class User {
 
 	@Enumerated(value = EnumType.STRING)
 	private UserStatus status;
-
-	@CreatedDate
-	private LocalDateTime createdTime;
-
-	@LastModifiedDate
-	private LocalDateTime updatedTime;
 
 	@Builder
 	public User(AuthType authType, String snsId) {
