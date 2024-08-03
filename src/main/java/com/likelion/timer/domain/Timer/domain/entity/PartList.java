@@ -2,6 +2,7 @@ package com.likelion.timer.domain.Timer.domain.entity;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -56,4 +57,10 @@ public class PartList extends BaseTime {
 		return Objects.hash(id, parts);
 	}
 
+	@Override
+	public String toString() {
+		return parts.stream()
+			.map(Part::toString)
+			.collect(Collectors.joining(", ", "[", "]"));
+	}
 }

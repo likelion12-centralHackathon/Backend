@@ -44,7 +44,7 @@ public class Timer extends BaseTime {
 
 	private String name;
 
-	private Float cycle;
+	private Long cycle;
 
 	private Boolean isPermanent;
 
@@ -56,13 +56,17 @@ public class Timer extends BaseTime {
 	@ManyToMany
 	private List<PartList> partLists;
 
+	private String deviceToken;
+
 	@Builder
-	public Timer(@NotNull User user, String name, Float cycle, Boolean isPermanent, Boolean isSettingByUser,
+	public Timer(@NotNull User user, String deviceToken, String name, Long cycle, Boolean isPermanent,
+		Boolean isSettingByUser,
 		List<PartList> partLists) {
 		this.user = user;
 		this.name = name;
 		this.cycle = cycle;
-		this.timerState = TimerStateTypeEnum.TIMER_NOT_START;
+		this.deviceToken = deviceToken;
+		this.timerState = TimerStateTypeEnum.TIMER_NOT_RUN;
 		this.isPermanent = isPermanent;
 		this.isSettingByUser = isSettingByUser;
 		this.partLists = partLists;
@@ -72,7 +76,7 @@ public class Timer extends BaseTime {
 		this.timerState = timerState;
 	}
 
-	public void updateTimer(String name, Float cycle, Boolean isSettingByUser, List<PartList> partLists) {
+	public void updateTimer(String name, Long cycle, Boolean isSettingByUser, List<PartList> partLists) {
 		this.name = name;
 		this.cycle = cycle;
 		this.isSettingByUser = isSettingByUser;

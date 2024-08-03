@@ -21,12 +21,14 @@ public class TimerResDto {
 	private List<PartListResDto> parts;
 
 	public static TimerResDto fromEntity(Timer timer) {
+		float cycle = timer.getCycle() / 1800.0f;
+
 		return TimerResDto.builder()
 			.timerId(timer.getId())
 			.userId(timer.getUser().getId())
 			.name(timer.getName())
 			.timerState(timer.getTimerState())
-			.cycle(timer.getCycle())
+			.cycle(cycle)
 			.isSettingByUser(timer.getIsSettingByUser())
 			.isPermanent(timer.getIsPermanent())
 			.isSettingByUser(timer.getIsSettingByUser())

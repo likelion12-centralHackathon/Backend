@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.likelion.timer.domain.Timer.domain.entity.Timer;
 import com.likelion.timer.domain.Timer.dto.res.TimerListResDto;
+import com.likelion.timer.domain.model.TimerStateTypeEnum;
 
 @Repository
 public interface TimerRepository extends JpaRepository<Timer, Long> {
@@ -23,4 +24,6 @@ public interface TimerRepository extends JpaRepository<Timer, Long> {
 		+ "WHERE t.user.id = :userId AND t.isPermanent = true " +
 		"ORDER BY t.regTime DESC")
 	List<TimerListResDto> findPermanentTimersNameAndIdByUserId(@Param("userId") String userId);
+
+	List<Timer> findByTimerState(TimerStateTypeEnum timerStateTypeEnum);
 }

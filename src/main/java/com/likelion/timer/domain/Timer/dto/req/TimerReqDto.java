@@ -23,6 +23,9 @@ public class TimerReqDto {
 	String name;
 
 	@NotNull
+	String deviceToken;
+
+	@NotNull
 	Boolean isPermanent;
 
 	@NotNull
