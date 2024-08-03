@@ -33,7 +33,8 @@ public class SecurityConfig {
 		"/swagger-ui/**",
 		"/v3/api-docs/**",
 		"/error",
-		"/test/**"
+		"/test/**",
+		"/api/v1/Youtube/keywordSearchData.do"
 	};
 
 	@Bean
