@@ -9,12 +9,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum TimerStateTypeEnum {
-	TIMER_START(0, "Timer Start"),
-	TIMER_STOP(1, "Timer Stop"),
-	TIMER_DESTROY(2, "Timer Destroy"),
-	STRETCHING_START(3, "Stretching Start"),
-	STRETCHING_DONE(4, "Stretching Done"),
-	TIMER_NOT_START(5, "Timer Not Start"),
+	TIMER_NOT_RUN(0, "Timer Not Run"),
+	TIMER_RUN(1, "Timer Run"),
 	;
 
 	private final Integer key;
@@ -22,12 +18,8 @@ public enum TimerStateTypeEnum {
 
 	public static TimerStateTypeEnum findByKey(Integer key) {
 		return switch (key) {
-			case 0 -> TIMER_START;
-			case 1 -> TIMER_STOP;
-			case 2 -> TIMER_DESTROY;
-			case 3 -> STRETCHING_START;
-			case 4 -> STRETCHING_DONE;
-			case 5 -> TIMER_NOT_START;
+			case 0 -> TIMER_NOT_RUN;
+			case 1 -> TIMER_RUN;
 			default -> throw new AppException(TimerErrorCode.INVALID_TIMER_STATE);
 		};
 	}
