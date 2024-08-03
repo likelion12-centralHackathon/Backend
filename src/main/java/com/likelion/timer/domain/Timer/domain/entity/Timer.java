@@ -7,7 +7,6 @@ import org.antlr.v4.runtime.misc.NotNull;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.likelion.timer.domain.Timer.dto.req.TimerUpdateReqDto;
 import com.likelion.timer.domain.model.TimerStateTypeEnum;
 import com.likelion.timer.global.entity.BaseTime;
 import com.likelion.timer.user.model.User;
@@ -45,7 +44,7 @@ public class Timer extends BaseTime {
 
 	private String name;
 
-	private Float cycle;
+	private Long cycle;
 
 	private Boolean isPermanent;
 
@@ -58,12 +57,12 @@ public class Timer extends BaseTime {
 	private List<PartList> partLists;
 
 	@Builder
-	public Timer(@NotNull User user, String name, Float cycle, Boolean isPermanent, Boolean isSettingByUser,
+	public Timer(@NotNull User user, String name, Long cycle, Boolean isPermanent, Boolean isSettingByUser,
 		List<PartList> partLists) {
 		this.user = user;
 		this.name = name;
 		this.cycle = cycle;
-		this.timerState = TimerStateTypeEnum.TIMER_NOT_START;
+		this.timerState = TimerStateTypeEnum.TIMER_NOT_RUN;
 		this.isPermanent = isPermanent;
 		this.isSettingByUser = isSettingByUser;
 		this.partLists = partLists;
@@ -73,10 +72,10 @@ public class Timer extends BaseTime {
 		this.timerState = timerState;
 	}
 
-	public void updateTimer(TimerUpdateReqDto timerUpdateReqDto, List<PartList> partLists) {
-		this.name = timerUpdateReqDto.getName();
-		this.cycle = timerUpdateReqDto.getCycle();
-		this.isSettingByUser = timerUpdateReqDto.getIsSettingByUser();
+	public void updateTimer(String name, Long cycle, Boolean isSettingByUser, List<PartList> partLists) {
+		this.name = name;
+		this.cycle = cycle;
+		this.isSettingByUser = isSettingByUser;
 		this.partLists = partLists;
 	}
 
