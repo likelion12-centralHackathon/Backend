@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import static jakarta.persistence.FetchType.LAZY;
 
 @Getter @Setter
-@NoArgsConstructor(access= AccessLevel.PROTECTED)
+@NoArgsConstructor(access= AccessLevel.PUBLIC)
 @Entity
 public class Bootchallenge {
 
