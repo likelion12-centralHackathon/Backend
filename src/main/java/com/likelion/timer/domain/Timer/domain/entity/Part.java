@@ -66,4 +66,8 @@ public class Part extends BaseTime {
 		return Objects.hash(id, partType);
 	}
 
+	@Override
+	public String toString() {
+		return partType.getKey().toString();
+	}
 }
