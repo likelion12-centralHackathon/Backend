@@ -7,10 +7,9 @@ import org.antlr.v4.runtime.misc.NotNull;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.likelion.timer.domain.Timer.dto.req.TimerUpdateReqDto;
-import com.likelion.timer.domain.User.domain.T_User;
 import com.likelion.timer.domain.model.TimerStateTypeEnum;
 import com.likelion.timer.global.entity.BaseTime;
+import com.likelion.timer.user.model.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,6 +20,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import lombok.Builder;
@@ -39,7 +39,8 @@ public class Timer extends BaseTime {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	private T_User user;
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
 
 	private String name;
 
@@ -56,7 +57,7 @@ public class Timer extends BaseTime {
 	private List<PartList> partLists;
 
 	@Builder
-	public Timer(@NotNull T_User user, String name, Float cycle, Boolean isPermanent, Boolean isSettingByUser,
+	public Timer(@NotNull User user, String name, Float cycle, Boolean isPermanent, Boolean isSettingByUser,
 		List<PartList> partLists) {
 		this.user = user;
 		this.name = name;
@@ -71,10 +72,10 @@ public class Timer extends BaseTime {
 		this.timerState = timerState;
 	}
 
-	public void updateTimer(TimerUpdateReqDto timerUpdateReqDto, List<PartList> partLists) {
-		this.name = timerUpdateReqDto.getName();
-		this.cycle = timerUpdateReqDto.getCycle();
-		this.isSettingByUser = timerUpdateReqDto.getIsSettingByUser();
+	public void updateTimer(String name, Float cycle, Boolean isSettingByUser, List<PartList> partLists) {
+		this.name = name;
+		this.cycle = cycle;
+		this.isSettingByUser = isSettingByUser;
 		this.partLists = partLists;
 	}
 
