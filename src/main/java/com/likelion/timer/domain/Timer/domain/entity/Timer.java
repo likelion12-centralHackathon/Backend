@@ -56,12 +56,16 @@ public class Timer extends BaseTime {
 	@ManyToMany
 	private List<PartList> partLists;
 
+	private String deviceToken;
+
 	@Builder
-	public Timer(@NotNull User user, String name, Long cycle, Boolean isPermanent, Boolean isSettingByUser,
+	public Timer(@NotNull User user, String deviceToken, String name, Long cycle, Boolean isPermanent,
+		Boolean isSettingByUser,
 		List<PartList> partLists) {
 		this.user = user;
 		this.name = name;
 		this.cycle = cycle;
+		this.deviceToken = deviceToken;
 		this.timerState = TimerStateTypeEnum.TIMER_NOT_RUN;
 		this.isPermanent = isPermanent;
 		this.isSettingByUser = isSettingByUser;
