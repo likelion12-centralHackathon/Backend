@@ -9,6 +9,9 @@ import java.util.Random;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
 import com.likelion.timer.domain.Timer.domain.entity.PartList;
 import com.likelion.timer.domain.Timer.domain.entity.RecordTimer;
 import com.likelion.timer.domain.Timer.domain.entity.Timer;
@@ -151,7 +154,7 @@ public class TimerService {
 
 		// timer 객체 생성
 		timer.updateTimer(timerUpdateReqDto.getName(), cycleInSeconds,
-			timerUpdateReqDto.getIsSettingByUser(), partLists);
+		timerUpdateReqDto.getIsSettingByUser(), partLists);
 
 		// timer 저장
 		timerRepository.save(timer);
@@ -231,4 +234,61 @@ public class TimerService {
 		}
 	}
 
+	// 주기적인 작업을 수행하는 TimerTask 클래스
+	private class TimerTask extends Thread {
+		private final Long timerId;
+		private final long cycleInMillis;
+		private int cycleCount = 0;
+
+		public TimerTask(Long timerId, long cycleInMillis) {
+			this.timerId = timerId;
+			this.cycleInMillis = cycleInMillis;
+		}
+
+		// FCM 알림을 위한 메소드
+		private void sendFCMNotification(String userId, List<PartList> partLists) {
+			// FCM 메시지 생성
+			Message message = Message.builder()
+				.putData("title", "타이머 알림")
+				.putData("body", "주기적인 알림입니다.")
+				.putData("partLists", partLists.toString())
+				.setToken(userId) // 사용자 토큰 (FCM 토큰)
+				.build();
+
+			try {
+				// FCM 메시지 전송
+				String response = FirebaseMessaging.getInstance().send(message);
+				log.info("Successfully sent message: " + response);
+			} catch (FirebaseMessagingException e) {
+				log.error("Error sending FCM message", e);
+				throw new RuntimeException(e);
+			}
+		}
+
+		private void startTimerCycle(Timer timer) {
+			long cycleInMillis = (long)(timer.getCycle() * 60 * 60 * 1000); // 주기 (시간 단위 -> 밀리초)
+			new TimerTask(timer.getId(), cycleInMillis).start();
+		}
+
+		@Override
+		public void run() {
+			while (true) {
+				try {
+					Thread.sleep(cycleInMillis);
+					cycleCount++;
+					Timer timer = timerRepository.findById(timerId)
+						.orElseThrow(() -> new AppException(TimerErrorCode.TIMER_NOT_FOUND));
+					sendFCMNotification(timer.getUser().getId(), timer.getPartLists());
+					log.info("Cycle count: " + cycleCount);
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					log.error("Timer interrupted", e);
+					break;
+				} catch (AppException e) {
+					log.error("Timer not found", e);
+					break;
+				}
+			}
+		}
+	}
 }

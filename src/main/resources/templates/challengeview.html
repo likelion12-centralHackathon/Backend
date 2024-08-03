@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Challenge View</title>
+</head>
+<body>
+<h1>Challenge Details</h1>
+<p>Title: ${bootchallenge.title}</p>
+<p>Content: ${bootchallenge.content}</p>
+<p>Views: ${bootchallenge.hit}</p>
+<p>Participants: ${bootchallenge.participants}</p>
+
+<form action="/challenge/participate/${bootchallenge.id}" method="post">
+    <button type="submit">Participate</button>
+</form>
+
+<a href="/challenge/update/${bootchallenge.id}">Update Challenge</a>
+<a href="/challenge/delete/${bootchallenge.id}">Delete Challenge</a>
+<a href="/challenge/list">Back to List</a>
+</body>
+</html>

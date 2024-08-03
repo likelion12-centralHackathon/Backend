@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Participating Challenges</title>
+</head>
+<body>
+<h1>Participating Challenges</h1>
+<ul>
+    <th:block th:each="challenge : ${challenges}">
+        <li>
+            <a th:href="@{/challenge/view/{id}(id=${challenge.id})}" th:text="${challenge.title}">Challenge Title</a>
+            <p th:text="'Views: ' + ${challenge.hit}"></p>
+            <p th:text="'Participants: ' + ${challenge.participants}"></p>
+            <p th:text="'State: ' + ${challenge.state}"></p>
+        </li>
+    </th:block>
+</ul>
+<a href="/challenge/create">Create New Challenge</a>
+<a href="/challenge/list">Back to List</a>
+</body>
+</html>
