@@ -12,7 +12,6 @@ import lombok.Getter;
 @Builder
 public class TimerResDto {
 	private Long timerId;
-	private String userId;
 	private String name;
 	private float cycle;
 	private TimerStateTypeEnum timerState;
@@ -25,7 +24,6 @@ public class TimerResDto {
 
 		return TimerResDto.builder()
 			.timerId(timer.getId())
-			.userId(timer.getUser().getId())
 			.name(timer.getName())
 			.timerState(timer.getTimerState())
 			.cycle(cycle)
