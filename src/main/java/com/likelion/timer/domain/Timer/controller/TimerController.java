@@ -50,7 +50,7 @@ public class TimerController {
 		List<TimerPartListResDto> timerPartListResDtos = recordTimerService.getPartListsByDate(
 			userDetails.getUsername(), date);
 
-		return ResponseEntity.status(201).body(DataResponseDto.of(timerPartListResDtos, 201));
+		return ResponseEntity.status(200).body(DataResponseDto.of(timerPartListResDtos, 200));
 
 	}
 
@@ -61,7 +61,7 @@ public class TimerController {
 		List<PartStaticResDto> partStaticResDtos = recordTimerService.getPartStaticsByDate(
 			userDetails.getUsername(), date);
 
-		return ResponseEntity.status(201).body(DataResponseDto.of(partStaticResDtos, 201));
+		return ResponseEntity.status(200).body(DataResponseDto.of(partStaticResDtos, 200));
 	}
 
 	@PostMapping
