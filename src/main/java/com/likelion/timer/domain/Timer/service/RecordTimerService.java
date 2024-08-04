@@ -13,7 +13,6 @@ import com.likelion.timer.domain.Timer.domain.entity.Timer;
 import com.likelion.timer.domain.Timer.domain.repository.PartRepository;
 import com.likelion.timer.domain.Timer.domain.repository.RecordTimerRepository;
 import com.likelion.timer.domain.Timer.domain.repository.TimerRepository;
-import com.likelion.timer.domain.Timer.dto.req.RecordTimerReqDto;
 import com.likelion.timer.domain.Timer.dto.res.PartStaticResDto;
 import com.likelion.timer.domain.Timer.dto.res.RecordTimerResDto;
 import com.likelion.timer.domain.Timer.dto.res.TimerPartListResDto;
@@ -70,13 +69,12 @@ public class RecordTimerService {
 	}
 
 	@Transactional
-	public RecordTimerResDto addRecordTimer(String userId, RecordTimerReqDto recordTimerReqDto) {
+	public RecordTimerResDto addRecordTimer(String userId, Long timerId, Integer timerStateType, Integer partType) {
 		// 존재하는 타입을 준 것인지 검사
-		RecordTimerStateTypeEnum recordTimerStateTypeEnum = RecordTimerStateTypeEnum.findByKey(
-			recordTimerReqDto.getTimerStateType());
+		RecordTimerStateTypeEnum recordTimerStateTypeEnum = RecordTimerStateTypeEnum.findByKey(timerStateType);
 
 		// 타이머 있는지 검사
-		Timer timer = timerRepository.findById(recordTimerReqDto.getTimerId())
+		Timer timer = timerRepository.findById(timerId)
 			.orElseThrow(() -> new AppException(TimerErrorCode.TIMER_NOT_FOUND));
 
 		// 유저 있는 유저인지 검사
@@ -95,7 +93,7 @@ public class RecordTimerService {
 
 			case TIMER_STOP:
 				beforeRecordTimer = recordTimerRepository.findTopByTimerIdAndUserIdOrderByRegTimeDesc(
-						recordTimerReqDto.getTimerId(), userId)
+						timerId, userId)
 					.orElseThrow(() -> new AppException(TimerErrorCode.RECORD_TIMER_NOT_FOUND));
 
 				recordTimerResDto = handleTimerStop(timer, user, beforeRecordTimer);
@@ -103,31 +101,31 @@ public class RecordTimerService {
 
 			case TIMER_DESTROY:
 				beforeRecordTimer = recordTimerRepository.findTopByTimerIdAndUserIdOrderByRegTimeDesc(
-						recordTimerReqDto.getTimerId(), userId)
+						timerId, userId)
 					.orElseThrow(() -> new AppException(TimerErrorCode.RECORD_TIMER_NOT_FOUND));
 				recordTimerResDto = handleTimerDestroy(timer, user, beforeRecordTimer);
 				break;
 
 			case TIMER_RESTART:
-				beforeRecordTimer = findRecordTimerForStop(recordTimerReqDto.getTimerId(), userId);
+				beforeRecordTimer = findRecordTimerForStop(timerId, userId);
 				recordTimerResDto = handleTimerRestart(timer, user, beforeRecordTimer);
 				break;
 
 			case STRETCHING_DONE:
 				beforeRecordTimer = recordTimerRepository.findTopByTimerIdAndUserIdOrderByRegTimeDesc(
-						recordTimerReqDto.getTimerId(), userId)
+						timerId, userId)
 					.orElseThrow(() -> new AppException(TimerErrorCode.RECORD_TIMER_NOT_FOUND));
 				recordTimerResDto = handleStretchingDone(timer, user,
-					PartTypeEnum.findByKey(recordTimerReqDto.getPartType()),
+					PartTypeEnum.findByKey(partType),
 					beforeRecordTimer);
 				break;
 
 			case STRETCHING_START:
 				beforeRecordTimer = recordTimerRepository.findTopByTimerIdAndUserIdOrderByRegTimeDesc(
-						recordTimerReqDto.getTimerId(), userId)
+						timerId, userId)
 					.orElseThrow(() -> new AppException(TimerErrorCode.RECORD_TIMER_NOT_FOUND));
 				recordTimerResDto = handleStretchingStart(timer, user,
-					PartTypeEnum.findByKey(recordTimerReqDto.getPartType()),
+					PartTypeEnum.findByKey(partType),
 					beforeRecordTimer);
 				break;
 
