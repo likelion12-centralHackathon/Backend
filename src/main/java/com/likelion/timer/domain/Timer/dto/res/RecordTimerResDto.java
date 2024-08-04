@@ -25,7 +25,8 @@ public class RecordTimerResDto {
 	public static RecordTimerResDto fromEntity(RecordTimer recordTimer) {
 		float cycle = recordTimer.getTimer().getCycle() / 1800.0f;
 
-		if (recordTimer.getTimerStateType().equals(RecordTimerStateTypeEnum.TIMER_DESTROY)) {
+		if (recordTimer.getTimerStateType().equals(RecordTimerStateTypeEnum.TIMER_DESTROY) && !recordTimer.getTimer()
+			.getIsPermanent()) {
 			return RecordTimerResDto.builder()
 				.recordTimerStateType(recordTimer.getTimerStateType())
 				.cycle(cycle)
