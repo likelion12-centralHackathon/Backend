@@ -133,13 +133,18 @@ public class TimerService {
 	}
 
 	@Transactional
-	public TimerResDto updateTimer(String userId, Long timerId, TimerUpdateReqDto timerUpdateReqDto) {
+	public void updateTimer(String userId, Long timerId, TimerUpdateReqDto timerUpdateReqDto) {
 
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new AppException(GlobalErrorCode.USER_NOT_FOUND));
 
 		Timer timer = timerRepository.findByUserIdAndId(userId, timerId)
 			.orElseThrow(() -> new AppException(TimerErrorCode.TIMER_NOT_FOUND));
+
+		// 이름이 비어있는 경우
+		if (timer.getName() == null) {
+			throw new AppException(TimerErrorCode.INVALID_TIMER_NOT_SAVED);
+		}
 
 		// name 중복 체크
 		if (!timer.getName().equals(timerUpdateReqDto.getName())) {
@@ -154,16 +159,14 @@ public class TimerService {
 
 		// timer 객체 생성
 		timer.updateTimer(timerUpdateReqDto.getName(), cycleInSeconds,
-		timerUpdateReqDto.getIsSettingByUser(), partLists);
+			timerUpdateReqDto.getIsSettingByUser(), partLists);
 
 		// timer 저장
 		timerRepository.save(timer);
-
-		return TimerResDto.fromEntity(timer);
 	}
 
 	@Transactional
-	public TimerResDto addTimer(String userId, TimerReqDto timerReqDto) {
+	public void addTimer(String userId, TimerReqDto timerReqDto) {
 		// 사용자 찾기
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new AppException(GlobalErrorCode.USER_NOT_FOUND));
@@ -190,8 +193,6 @@ public class TimerService {
 
 		// timer 저장
 		timerRepository.save(timer);
-
-		return TimerResDto.fromEntity(timer);
 	}
 
 	private List<PartList> checkPartLists(Boolean isSettingByUser, List<PartReqDto> parts) {

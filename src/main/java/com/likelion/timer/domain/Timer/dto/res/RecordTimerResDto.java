@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 @Builder
 @AllArgsConstructor
 public class RecordTimerResDto {
-	String userId;
 	Long timerId;
 	RecordTimerStateTypeEnum recordTimerStateType;
 	Float cycle;
@@ -26,9 +25,9 @@ public class RecordTimerResDto {
 	public static RecordTimerResDto fromEntity(RecordTimer recordTimer) {
 		float cycle = recordTimer.getTimer().getCycle() / 1800.0f;
 
-		if (recordTimer.getTimerStateType().equals(RecordTimerStateTypeEnum.TIMER_DESTROY)) {
+		if (recordTimer.getTimerStateType().equals(RecordTimerStateTypeEnum.TIMER_DESTROY) && !recordTimer.getTimer()
+			.getIsPermanent()) {
 			return RecordTimerResDto.builder()
-				.userId(recordTimer.getUser().getId())
 				.recordTimerStateType(recordTimer.getTimerStateType())
 				.cycle(cycle)
 				.stretchingTime(recordTimer.getStretchingTime())
@@ -37,7 +36,6 @@ public class RecordTimerResDto {
 		} else if (recordTimer.getTimerStateType().equals(RecordTimerStateTypeEnum.STRETCHING_DONE) ||
 			recordTimer.getTimerStateType().equals(RecordTimerStateTypeEnum.STRETCHING_START)) {
 			return RecordTimerResDto.builder()
-				.userId(recordTimer.getUser().getId())
 				.timerId(recordTimer.getTimer().getId())
 				.recordTimerStateType(recordTimer.getTimerStateType())
 				.cycle(cycle)
@@ -49,7 +47,6 @@ public class RecordTimerResDto {
 
 		} else {
 			return RecordTimerResDto.builder()
-				.userId(recordTimer.getUser().getId())
 				.timerId(recordTimer.getTimer().getId())
 				.recordTimerStateType(recordTimer.getTimerStateType())
 				.cycle(cycle)

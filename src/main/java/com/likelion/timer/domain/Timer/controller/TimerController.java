@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.likelion.timer.domain.Timer.dto.req.RecordTimerReqDto;
 import com.likelion.timer.domain.Timer.dto.req.TimerReqDto;
 import com.likelion.timer.domain.Timer.dto.req.TimerUpdateReqDto;
 import com.likelion.timer.domain.Timer.dto.res.PartStaticResDto;
@@ -50,7 +50,7 @@ public class TimerController {
 		List<TimerPartListResDto> timerPartListResDtos = recordTimerService.getPartListsByDate(
 			userDetails.getUsername(), date);
 
-		return ResponseEntity.status(201).body(DataResponseDto.of(timerPartListResDtos, 201));
+		return ResponseEntity.status(200).body(DataResponseDto.of(timerPartListResDtos, 200));
 
 	}
 
@@ -61,25 +61,26 @@ public class TimerController {
 		List<PartStaticResDto> partStaticResDtos = recordTimerService.getPartStaticsByDate(
 			userDetails.getUsername(), date);
 
-		return ResponseEntity.status(201).body(DataResponseDto.of(partStaticResDtos, 201));
+		return ResponseEntity.status(200).body(DataResponseDto.of(partStaticResDtos, 200));
 	}
 
 	@PostMapping
 	public ResponseEntity<ResponseDto> addTimer(Authentication authentication,
 		@RequestBody @Valid TimerReqDto timerReqDto) {
 		UserDetails userDetails = (UserDetails)authentication.getPrincipal();
-		TimerResDto timerResDto = timerService.addTimer(userDetails.getUsername(), timerReqDto);
+		timerService.addTimer(userDetails.getUsername(), timerReqDto);
 
-		return ResponseEntity.status(201).body(DataResponseDto.of(timerResDto, 201));
+		return ResponseEntity.ok(ResponseDto.of(201));
 	}
 
-	@PostMapping("/state")
+	@PostMapping("/state/{timerId}")
 	public ResponseEntity<ResponseDto> updateTimerStateAndAddRecordTimer(Authentication authentication,
-		@Valid @RequestBody RecordTimerReqDto recordTimerReqDto) {
+		@PathVariable(name = "timerId") Long timerId,
+		@RequestParam(name = "timerState") Integer timerState,
+		@RequestParam(name = "part") Integer partType) {
 		UserDetails userDetails = (UserDetails)authentication.getPrincipal();
-		RecordTimerResDto recordTimerResDto = recordTimerService.addRecordTimer(userDetails.getUsername(),
-			recordTimerReqDto);
-
+		RecordTimerResDto recordTimerResDto = recordTimerService.addRecordTimer(userDetails.getUsername(), timerId,
+			timerState, partType);
 		return ResponseEntity.status(201).body(DataResponseDto.of(recordTimerResDto, 201));
 	}
 
@@ -96,9 +97,9 @@ public class TimerController {
 	public ResponseEntity<ResponseDto> updateTimer(Authentication authentication,
 		@PathVariable(name = "timerId") Long timerId, @RequestBody @Valid TimerUpdateReqDto timerUpdateReqDto) {
 		UserDetails userDetails = (UserDetails)authentication.getPrincipal();
-		TimerResDto timerResDto = timerService.updateTimer(userDetails.getUsername(), timerId, timerUpdateReqDto);
+		timerService.updateTimer(userDetails.getUsername(), timerId, timerUpdateReqDto);
 
-		return ResponseEntity.status(200).body(DataResponseDto.of(timerResDto, 200));
+		return ResponseEntity.ok(ResponseDto.of(200));
 	}
 
 	@GetMapping
@@ -107,7 +108,7 @@ public class TimerController {
 		List<TimerListResDto> timerList = timerService.getTimerList(userDetails.getUsername());
 
 		if (timerList.isEmpty()) {
-			return ResponseEntity.status(204).body(DataResponseDto.of("저장된 타이머가 없습니다.", 204));
+			return ResponseEntity.ok(ResponseDto.of(204));
 		} else {
 			return ResponseEntity.status(200).body(DataResponseDto.of(timerList, 200));
 		}
