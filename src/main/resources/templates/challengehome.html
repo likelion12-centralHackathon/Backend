@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>챌린지 페이지</title>
+</head>
+<body>
+<h1>챌린지 페이지</h1>
+
+<!-- 카테고리 필터 -->
+<form method="get" action="/api/v1/challenge">
+    <select name="category" onchange="this.form.submit()">
+        <option value="ALL" th:selected="${selectedCategory == 'ALL'}">전체</option>
+        <!-- Loop through categories and create options -->
+        <th:block th:each="category : ${categories}">
+            <option th:value="${category}" th:text="${category}" th:selected="${category.name() == selectedCategory}"></option>
+        </th:block>
+    </select>
+    <noscript><input type="submit" value="Filter"></noscript>
+</form>
+
+<!-- 진행 중인 챌린지 -->
+<div>
+    <h2>진행 중인 챌린지</h2>
+    <div th:if="${participatingChallenges.size() == 0}">
+        <p>현재 진행 중인 챌린지가 없습니다.</p>
+    </div>
+    <ul>
+        <li th:each="challenge : ${participatingChallenges}" th:text="${challenge.name}"></li>
+    </ul>
+</div>
+
+
+
+</body>
+</html>

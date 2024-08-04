@@ -13,13 +13,13 @@ public class AuthTokenDto {
 	@Schema(description = "카카오 로그인 유저 추가 정보 입력 여부(=회원가입)", example = "false")
 	private boolean isJoined;
 
-	@Schema(example = "")
+	@Schema(example = "LbXsIdszBoNqua_rkfKL_EmVgxLNjQQwAAAAAQopyNkAAAGRBAtKYNEMsmlHt4Ko")
 	private String accessToken;
 
 	@Schema(description = "accessToken 만료 기간", example = "2024-07-28T17:43:37.116")
 	private LocalDateTime accessTokenExpiration;
 
-	@Schema(example = "")
+	@Schema(example = "LyOn8JetMsH3mY25yFIZa6A-4pWZOeGSAAAAAgopyNkAAAGRBAtKXdEMsmlHt4Ko")
 	private String refreshToken;
 
 	@Schema(description = "refreshToken 만료 기간", example = "2024-07-28T17:43:37.116")

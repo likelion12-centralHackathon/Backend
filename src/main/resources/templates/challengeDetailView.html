@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Challenge Detail View</title>
+</head>
+<body>
+<h1 th:text="${bootchallenge.title}"></h1>
+<p th:text="${bootchallenge.content}"></p>
+<p>Participants: <span th:text="${bootchallenge.participants}"></span></p>
+<p>Authentication Method: <span th:text="${bootchallenge.authMethod}"></span></p>
+<p>End Date: <span th:text="${bootchallenge.endDate}"></span></p>
+<p>Note: <span th:text="${bootchallenge.note}"></span></p>
+<p>State: <span th:text="${bootchallenge.state}"></span></p>
+</body>
+</html>

@@ -1,24 +1,27 @@
-package com.likelion.timer.challenge.entity;
+package com.likelion.timer.challenge.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import lombok.Data;
+import com.likelion.timer.user.model.User;
+import jakarta.persistence.*;
+import lombok.*;
+
 
 import java.time.LocalDate;
 
+import static jakarta.persistence.FetchType.LAZY;
+
+@Getter @Setter
+@NoArgsConstructor(access= AccessLevel.PUBLIC)
 @Entity
-@Data
 public class Bootchallenge {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "challenge_Id")
     private Integer id;
+
+    @ManyToOne(fetch=LAZY)
+    @JoinColumn(name="user_id")
+    private User user;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "ch_category")
@@ -29,22 +32,22 @@ public class Bootchallenge {
     private String title;
 
     //소개
-    @Column(name = "ch_ctnt", length = 225)
+    @Column(name = "ch_ctnt", length = 225, nullable = false)
     private String content;
 
     //인증 방법
-    @Column(name = "auth_method", length = 100)
+    @Column(name = "auth_method", length = 100, nullable = false)
     private String authMethod;
 
-    //진행 기간으로 드롭 다운으로 날짜를 받아야할 듯
-    @Column(name = "end_date")
+    //진행 기간을 드롭 다운으로 날짜를 받아야할 듯
+    @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
     //주의사항
-    @Column(name = "note", length = 225)
+    @Column(name = "note", length = 225, nullable = false)
     private String note;
 
-    //참여, 미참여, 대기
+    //참여, 미참여, 대기, 참여완료
     @Enumerated(EnumType.STRING)
     @Column(name = "ch_state")
     private ChallengeState state;
@@ -61,8 +64,10 @@ public class Bootchallenge {
     public enum ChallengeState {
         PARTICIPATED,
         NOT_PARTICIPATED,
-        PENDING
+        PENDING,
+        PARTICIPATION_COMPLETED
     }
+
 
     //ChallengeCategory enum 정의
     public enum ChallengeCategory {
@@ -71,4 +76,6 @@ public class Bootchallenge {
         FREE,
         ALL
     }
+
+
 }
