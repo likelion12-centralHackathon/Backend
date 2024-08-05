@@ -165,7 +165,7 @@ public class TimerService {
 	}
 
 	@Transactional
-	public void addTimer(String userId, TimerReqDto timerReqDto) {
+	public Long addTimer(String userId, TimerReqDto timerReqDto) {
 		// 사용자 찾기
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new AppException(GlobalErrorCode.USER_NOT_FOUND));
@@ -192,6 +192,8 @@ public class TimerService {
 
 		// timer 저장
 		timerRepository.save(timer);
+
+		return timer.getId();
 	}
 
 	private List<PartList> checkPartLists(Boolean isSettingByUser, List<PartReqDto> parts) {

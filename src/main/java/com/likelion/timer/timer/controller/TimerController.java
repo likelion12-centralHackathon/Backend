@@ -68,9 +68,9 @@ public class TimerController {
 	public ResponseEntity<ResponseDto> addTimer(Authentication authentication,
 		@RequestBody @Valid TimerReqDto timerReqDto) {
 		UserDetails userDetails = (UserDetails)authentication.getPrincipal();
-		timerService.addTimer(userDetails.getUsername(), timerReqDto);
+		Long timerId = timerService.addTimer(userDetails.getUsername(), timerReqDto);
 
-		return ResponseEntity.ok(ResponseDto.of(201));
+		return ResponseEntity.status(201).body(DataResponseDto.of(timerId, 201));
 	}
 
 	@PostMapping("/state/{timerId}")
