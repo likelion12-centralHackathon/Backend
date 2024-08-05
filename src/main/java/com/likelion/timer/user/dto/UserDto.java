@@ -63,7 +63,9 @@ public class UserDto {
 		this.birth = user.getBirth();
 		this.gender = user.getGender();
 		this.status = user.getStatus();
-		this.createdTime = user.getCreatedTime();
-		this.updatedTime = user.getUpdatedTime();
+		this.createdTime = user.getRegTime();  //basetime 변경됨
+		this.updatedTime = user.getUpdateTime();  // basetime 변경됨
 	}
 }
+
+
