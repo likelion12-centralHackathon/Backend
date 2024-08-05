@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +45,18 @@ public class SatisfactionController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         List<SatisfactionResponse> responses = satisfactionService.getSatisfactions(year, month, day, userDetails.getUsername());
         ApiResponse<List<SatisfactionResponse>> apiResponse = new ApiResponse<>(200, "Success", responses);
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    @PutMapping("/{id}") // 만족도 수정
+    public ResponseEntity<ApiResponse<SatisfactionResponse>> editSatisfaction(
+        Authentication authentication,
+        @Valid @RequestBody SatisfactionRequest request,
+        @PathVariable Long id
+    ) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        SatisfactionResponse response = satisfactionService.editSatisfaction(id, request, userDetails.getUsername());
+        ApiResponse<SatisfactionResponse> apiResponse = new ApiResponse<>(200, "Success", response);
         return ResponseEntity.ok(apiResponse);
     }
 }

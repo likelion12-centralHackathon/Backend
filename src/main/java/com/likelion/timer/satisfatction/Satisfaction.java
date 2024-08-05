@@ -2,6 +2,7 @@ package com.likelion.timer.satisfatction;
 
 import java.time.LocalDateTime;
 
+import com.likelion.timer.domain.model.PartTypeEnum;
 import com.likelion.timer.user.model.User;
 
 import jakarta.persistence.Entity;
@@ -34,7 +35,7 @@ public class Satisfaction {
     private String comment;
 
     @Enumerated(EnumType.STRING)
-    private PartType partType; // 부위
+    private PartTypeEnum partType; // 부위
 
     private int year;
     private int month;
@@ -44,7 +45,7 @@ public class Satisfaction {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Satisfaction(int rating, String comment, PartType partType, int year, int month, int day, User user) {
+    public Satisfaction(int rating, String comment, PartTypeEnum partType, int year, int month, int day, User user) {
         this.rating = rating;
         this.comment = comment;
         this.partType = partType;
@@ -60,5 +61,17 @@ public class Satisfaction {
         if (this.year == 0) this.year = now.getYear();
         if (this.month == 0) this.month = now.getMonthValue();
         if (this.day == 0) this.day = now.getDayOfMonth();
+    }
+
+    // 추가 생성자
+    public Satisfaction(Long id, int rating, String comment, PartTypeEnum partType, int year, int month, int day, User user) {
+        this.id = id;
+        this.rating = rating;
+        this.comment = comment;
+        this.partType = partType;
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        this.user = user;
     }
 }
