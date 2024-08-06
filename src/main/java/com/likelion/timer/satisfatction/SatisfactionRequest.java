@@ -1,6 +1,6 @@
 package com.likelion.timer.satisfatction;
 
-import com.likelion.timer.domain.model.PartTypeEnum;
+import com.likelion.timer.timer.model.PartTypeEnum;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

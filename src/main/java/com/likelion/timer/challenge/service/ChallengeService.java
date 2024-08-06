@@ -13,14 +13,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
-
+import java.util.UUID;
 
 @Service
 public class ChallengeService {
 
     @Autowired
     private ChallengeRepository challengeRepository;
+
+    private final String uploadDir = "src/main/resources/static/images/";
 
     // 카테고리별 챌린지 가져오기
     public List<BootchallengeDTO> getChallengesByCategory(Bootchallenge.ChallengeCategory category) {
@@ -40,7 +46,6 @@ public class ChallengeService {
         challengeRepository.save(bootchallenge);
         return BootchallengeMapper.toResponseDTO(bootchallenge);
     }
-
 
     // 특정 게시글 1차 불러오기
     public BootchallengeResponseDTO getChallengeBrief(Integer id) {
@@ -62,12 +67,23 @@ public class ChallengeService {
     }
 
     // 게시글 생성
-    public BootchallengeResponseDTO create(BootchallengeCreateDTO dto, MultipartFile file) {
+    public BootchallengeResponseDTO create(BootchallengeCreateDTO dto, MultipartFile file) throws IOException {
         Bootchallenge bootchallenge = BootchallengeMapper.toEntity(dto);
+
+        // 파일 업로드 처리
+        if (!file.isEmpty()) {
+            String imageName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            Path filePath = Paths.get(uploadDir + imageName);
+            Files.createDirectories(filePath.getParent()); // Ensure directory exists
+            file.transferTo(filePath.toFile());
+            bootchallenge.setImageUrl("/images/" + imageName);
+        }
+
         challengeRepository.save(bootchallenge);
         return BootchallengeMapper.toResponseDTO(bootchallenge);
     }
 
+    // 게시글 업데이트
     public BootchallengeResponseDTO update(Integer id, BootchallengeUpdateDTO dto) {
         Bootchallenge bootchallenge = challengeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Challenge not found"));
         bootchallenge = BootchallengeMapper.toEntity(dto, bootchallenge);
@@ -95,12 +111,22 @@ public class ChallengeService {
     //참여 인증하는 페이지
     public void conformChallenge(Integer id, MultipartFile file1, MultipartFile file2, MultipartFile file3) throws Exception {
         Bootchallenge bootchallenge = challengeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Challenge not found"));
+
+        // Ensure all files are present and save them
         if (!file1.isEmpty() && !file2.isEmpty() && !file3.isEmpty()) {
-            // 파일 처리 로직 추가
-            file1.transferTo(new File("/path/to/save/" + file1.getOriginalFilename()));
-            file2.transferTo(new File("/path/to/save/" + file2.getOriginalFilename()));
-            file3.transferTo(new File("/path/to/save/" + file3.getOriginalFilename()));
+            saveFile(file1);
+            saveFile(file2);
+            saveFile(file3);
         }
+
         challengeRepository.save(bootchallenge);
     }
+
+    private void saveFile(MultipartFile file) throws IOException {
+        String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        Path filePath = Paths.get(uploadDir + filename);
+        Files.createDirectories(filePath.getParent()); // Ensure directory exists
+        file.transferTo(filePath.toFile());
+    }
 }
+
