@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Challenge Brief View</title>
+</head>
+<body>
+<h1 th:text="${bootchallenge.title}"></h1>
+<p th:text="${bootchallenge.content}"></p>
+<p>Participants: <span th:text="${bootchallenge.participants}"></span></p>
+<a th:href="@{/api/v1/challenge/view/detail/{id}(id=${bootchallenge.id})}">View Details</a>
+</body>
+</html>
