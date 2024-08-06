@@ -2,7 +2,7 @@ package com.likelion.timer.satisfatction;
 
 import java.time.LocalDateTime;
 
-import com.likelion.timer.domain.model.PartTypeEnum;
+import com.likelion.timer.timer.model.PartTypeEnum;
 import com.likelion.timer.user.model.User;
 
 import jakarta.persistence.Entity;

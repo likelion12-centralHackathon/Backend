@@ -1,6 +1,6 @@
 package com.likelion.timer.satisfatction;
 
-import com.likelion.timer.domain.model.PartTypeEnum;
+import com.likelion.timer.timer.model.PartTypeEnum;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -16,5 +16,6 @@ public class BootchallengeUpdateDTO {
     private String authMethod;
     private LocalDate endDate;
     private String note;
+    private String ImageUrl;
 }
 

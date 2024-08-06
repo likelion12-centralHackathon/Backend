@@ -21,7 +21,8 @@ public class BootchallengeMapper {
                 bootchallenge.getNote(),
                 bootchallenge.getState(),
                 bootchallenge.getHit(),
-                bootchallenge.getParticipants()
+                bootchallenge.getParticipants(),
+                bootchallenge.getImageUrl()
         );
     }
 
@@ -57,7 +58,8 @@ public class BootchallengeMapper {
                 bootchallenge.getNote(),
                 bootchallenge.getState(),
                 bootchallenge.getHit(),
-                bootchallenge.getParticipants()
+                bootchallenge.getParticipants(),
+                bootchallenge.getImageUrl()
         );
     }
 }
