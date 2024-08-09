@@ -4,10 +4,12 @@ import com.likelion.timer.login.exception.ApiException;
 import com.likelion.timer.login.exception.Error;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
+@Getter
 public class ApiErrorResponse {
 
 	private Integer code;
