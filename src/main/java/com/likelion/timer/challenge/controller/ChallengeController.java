@@ -1,16 +1,15 @@
 package com.likelion.timer.challenge.controller;
 
-import com.likelion.timer.challenge.DTO.BootchallengeCreateDTO;
-import com.likelion.timer.challenge.DTO.BootchallengeDTO;
-import com.likelion.timer.challenge.DTO.BootchallengeResponseDTO;
-import com.likelion.timer.challenge.DTO.BootchallengeUpdateDTO;
-import com.likelion.timer.challenge.domain.entity.Bootchallenge;
+import com.likelion.timer.challenge.DTO.ChallengeCertificationDto;
+import com.likelion.timer.challenge.DTO.ChallengeOverviewDto;
+import com.likelion.timer.challenge.DTO.ChallengeViewStep2Dto;
+import com.likelion.timer.challenge.DTO.ChallengeCreateStep1Dto;
+import com.likelion.timer.challenge.DTO.ChallengeCreateStep2Dto;
+import com.likelion.timer.challenge.domain.entity.Challenge;
 import com.likelion.timer.challenge.service.ChallengeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -20,79 +19,46 @@ public class ChallengeController {
     @Autowired
     private ChallengeService challengeService;
 
-    //처음 challenge 페이지
-    @GetMapping
-    public List<BootchallengeDTO> challengeHome(@RequestParam(value = "category", defaultValue = "ALL") Bootchallenge.ChallengeCategory category) {
-        List<BootchallengeDTO> challenges = challengeService.getChallengesByCategory(category);
-        // List<BootchallengeDTO> participatingChallenges = challengeService.getParticipatingChallenges(); // 필요 시 사용
-        return challenges;
+    // Step 1: 이미지와 카테고리 저장
+    @PostMapping("/create/step1")
+    public Challenge createChallengeStep1(@RequestBody ChallengeCreateStep1Dto step1Dto) {
+        return challengeService.saveStep1(step1Dto);
     }
 
-    //만드는 페이지
-    @GetMapping("/create")
-    public String challengeWriteForm() {
-        return "Ready to create challenge";
+    // Step 2: 제목, 내용 등 나머지 정보 저장
+    @PostMapping("/create/step2/{challengeId}")
+    public Challenge createChallengeStep2(@PathVariable Long challengeId,
+                                          @RequestBody ChallengeCreateStep2Dto step2Dto) throws Exception {
+        return challengeService.saveStep2(challengeId, step2Dto);
     }
 
-    @PostMapping("/createpro")
-    public String challengeCreatePro(@ModelAttribute BootchallengeCreateDTO dto, @RequestParam("file") MultipartFile file) throws IOException {
-        challengeService.create(dto, file);
-        return "글 작성이 완료되었습니다.";
+    // 현재 사용자의 진행 중인 챌린지들 조회
+    @GetMapping("/inprogress/{userId}")
+    public List<ChallengeOverviewDto> getInProgressChallenges(@PathVariable Long userId) {
+        return challengeService.getInProgressChallenges(userId);
     }
 
-    //챌린지 1차 상세 설명
-    @GetMapping("/view/brief/{id}")
-    public BootchallengeResponseDTO challengeBriefView(@PathVariable("id") Integer id) {
-        return challengeService.getChallengeBrief(id);
+    // 특정 카테고리의 챌린지들 조회
+    @GetMapping("/category/{category}")
+    public List<ChallengeOverviewDto> getChallengesByCategory(@PathVariable String category) {
+        return challengeService.getChallengesByCategory(category);
     }
 
-    //챌린지 2차 상세 설명
-    @GetMapping("/view/detail/{id}")
-    public BootchallengeResponseDTO challengeDetailView(@PathVariable("id") Integer id) {
-        return challengeService.getChallengeDetail(id);
+    // 완료한 챌린지들 조회
+    @GetMapping("/completed/{userId}")
+    public List<ChallengeOverviewDto> getCompletedChallenges(@PathVariable Long userId) {
+        return challengeService.getCompletedChallenges(userId);
     }
 
-    //챌린지 상세 보기
-    @GetMapping("/view/{id}")
-    public BootchallengeResponseDTO challengeView(@PathVariable("id") Integer id) {
-        return challengeService.challengeView(id);
+    // 챌린지 상세 보기
+    @GetMapping("/view/{challengeId}")
+    public ChallengeViewStep2Dto viewChallengeDetails(@PathVariable Long challengeId) {
+        return challengeService.getChallengeDetails(challengeId);
     }
 
-    //챌린지 삭제
-    @DeleteMapping("/delete/{id}")
-    public String challengeDelete(@PathVariable("id") Integer id) {
-        challengeService.challengeDelete(id);
-        return "챌린지가 삭제되었습니다.";
-    }
-
-    //챌린지 수정
-    @PutMapping("/update/{id}")
-    public String challengeUpdate(@PathVariable("id") Integer id, @ModelAttribute BootchallengeUpdateDTO dto, @RequestParam("file") MultipartFile file) throws Exception {
-        challengeService.update(id, dto);
-        return "챌린지가 수정되었습니다.";
-    }
-
-    @PostMapping("/participate/{id}")
-    public String participateChallenge(@PathVariable("id") Integer id) {
-        challengeService.incrementParticipants(id);
-        return "참여가 완료되었습니다.";
-    }
-
-    //완료한 챌린지 보여주는 페이지
-    @GetMapping("/list/completed")
-    public List<BootchallengeDTO> completedChallenges() {
-        return challengeService.getCompletedChallenges();
-    }
-
-    //인증하는 페이지
-    @GetMapping("/participate/conform/{id}")
-    public BootchallengeResponseDTO challengeConformForm(@PathVariable("id") Integer id) {
-        return challengeService.challengeView(id);
-    }
-
-    @PostMapping("/participate/conform")
-    public String challengeConform(@RequestParam("id") Integer id, @RequestParam("file1") MultipartFile file1, @RequestParam("file2") MultipartFile file2, @RequestParam("file3") MultipartFile file3) throws Exception {
-        challengeService.conformChallenge(id, file1, file2, file3);
-        return "참여 내용이 성공적으로 저장되었습니다.";
+    // 챌린지 인증 사진 업로드
+    @PostMapping("/certification/upload")
+    public void uploadCertification(@RequestBody ChallengeCertificationDto certificationDto) {
+        challengeService.uploadCertification(certificationDto);
     }
 }
