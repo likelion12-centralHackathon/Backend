@@ -3,7 +3,9 @@ package com.likelion.timer.user.dto.request;
 import java.time.LocalDate;
 
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
 @Data
 public class KakaoJoinRequest {
