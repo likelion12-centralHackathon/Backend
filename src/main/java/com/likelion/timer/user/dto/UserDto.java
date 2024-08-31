@@ -11,7 +11,9 @@ import com.likelion.timer.user.constant.UserStatus;
 import com.likelion.timer.user.model.User;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
 @Schema(description = "유저 정보 response")
 @Data
