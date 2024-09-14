@@ -34,7 +34,8 @@ public class SecurityConfig {
 		"/v3/api-docs/**",
 		"/error",
 		"/test/**",
-		"/api/v1/Youtube/keywordSearchData.do"
+		"/api/v1/Youtube/keywordSearchData.do",
+		"api/v1/challenge/top3"
 	};
 
 	@Bean
