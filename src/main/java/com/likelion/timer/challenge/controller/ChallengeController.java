@@ -94,10 +94,19 @@ public class ChallengeController {
 	}
 
 	//챌린지 업데이트
-	@PostMapping("{challengeId}")
+	@PostMapping("/update/{challengeId}")
 	public ResponseEntity<ResponseDto>updateChallenge(Authentication authentication, @PathVariable(name="challengeId") Long challengeId,@RequestBody @Valid ChallengeUpdateReqDto challengeUpdateReqDto){
 		UserDetails userDetails=(UserDetails)authentication.getPrincipal();
 		challengeService.updateChallenge(userDetails.getUsername(), challengeId, challengeUpdateReqDto);
 		return ResponseEntity.ok(ResponseDto.of(200, "수정 성공"));
 	}
+
+	// 모든 챌린지 조회 API
+	@GetMapping("/list")
+	public List<ChallengeOverviewDto> getAllChallenges() {
+		return challengeService.getAllChallenges();
+	}
+
+
+
 }
