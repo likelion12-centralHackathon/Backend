@@ -255,4 +255,22 @@ public class ChallengeService {
 
 		challengeRepository.save(challenge);
 	}
+
+	// 모든 챌린지 리스트 조회
+	public List<ChallengeOverviewDto> getAllChallenges() {
+		return challengeRepository.findAll()
+				.stream()
+				.map(challenge -> new ChallengeOverviewDto(
+						challenge.getId(),
+						challenge.getTitle(),
+						challenge.getImgUrl(),
+						challenge.getParticipantCount(),
+						challenge.getEndDate(),
+						challenge.getAuthMethod(),
+						challenge.getNote(),
+						challenge.getCategory(),
+						challenge.getViewCount()))
+				.collect(Collectors.toList());
+	}
+
 }
